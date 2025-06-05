@@ -13,8 +13,12 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('sku')->unique();
+            $table->string('name');
             $table->text('description');
+            $table->string('tax_status')->default('taxable');
+            $table->string('tax_class')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
