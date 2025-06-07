@@ -36,15 +36,6 @@ class ProductResource extends Resource
                     ->required()
                     ->maxLength(65535)
                     ->columnSpanFull(),
-                Forms\Components\Select::make('tax_status')
-                    ->options([
-                        'taxable' => 'Taxable',
-                        'none' => 'None',
-                    ])
-                    ->required()
-                    ->default('taxable'),
-                Forms\Components\TextInput::make('tax_class')
-                    ->maxLength(255),
                 Forms\Components\FileUpload::make('image')
                     ->disk('public')
                     ->directory('products')
@@ -80,12 +71,6 @@ class ProductResource extends Resource
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('image')
                     ->square(),
-                Tables\Columns\TextColumn::make('tax_status')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('tax_class')
-                    ->searchable()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

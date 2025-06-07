@@ -10,8 +10,6 @@ class Product extends Model
         'name',
         'description',
         'sku',
-        'tax_status',
-        'tax_class',
         'image',
     ];
     // archive-boxs
