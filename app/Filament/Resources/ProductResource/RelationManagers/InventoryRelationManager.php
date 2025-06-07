@@ -1,36 +1,21 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\ProductResource\RelationManagers;
 
-use App\Filament\Resources\InventoryResource\Pages;
-use App\Filament\Resources\InventoryResource\RelationManagers;
-use App\Models\Inventory;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class InventoryResource extends Resource
+class InventoryRelationManager extends RelationManager
 {
-    protected static ?string $model = Inventory::class;
+    protected static string $relationship = 'inventory';
 
-    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
-
-    protected static ?string $navigationGroup = 'Product Management';
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('product_id')
-                    ->relationship('product', 'sku')
-                    ->searchable()
-                    ->preload()
-                    ->required()
-                    ->label('Product SKU'),
                 Forms\Components\TextInput::make('barcode')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('quantity')
@@ -53,18 +38,11 @@ class InventoryResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
+            ->recordTitleAttribute('product_id')
             ->columns([
-                Tables\Columns\TextColumn::make('product.sku')
-                    ->searchable()
-                    ->sortable()
-                    ->label('Product SKU'),
-                Tables\Columns\TextColumn::make('product.name')
-                    ->searchable()
-                    ->sortable()
-                    ->label('Product Name'),
                 Tables\Columns\TextColumn::make('barcode')
                     ->searchable()
                     ->sortable(),
@@ -81,17 +59,12 @@ class InventoryResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -103,20 +76,4 @@ class InventoryResource extends Resource
                 ]),
             ]);
     }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListInventories::route('/'),
-            'create' => Pages\CreateInventory::route('/create'),
-            'edit' => Pages\EditInventory::route('/{record}/edit'),
-        ];
-    }
-}
+} 

@@ -53,6 +53,30 @@ class ProductResource extends Resource
                     ->panelAspectRatio('2:1')
                     ->panelLayout('integrated')
                     ->columnSpanFull(),
+                Forms\Components\Section::make('Initial Inventory')
+                    ->schema([
+                        Forms\Components\TextInput::make('inventory.barcode')
+                            ->label('Barcode')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('inventory.quantity')
+                            ->label('Quantity')
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0)
+                            ->required(),
+                        Forms\Components\TextInput::make('inventory.security_stock')
+                            ->label('Security Stock')
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0)
+                            ->required()
+                            ->helperText('Minimum stock level before reordering'),
+                        Forms\Components\TextInput::make('inventory.location')
+                            ->label('Location')
+                            ->required()
+                            ->maxLength(255),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -96,7 +120,7 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\InventoryRelationManager::class,
         ];
     }
 
