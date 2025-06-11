@@ -32,10 +32,20 @@ class ProductResource extends Resource
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
+                Forms\Components\RichEditor::make('description')
                     ->required()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->toolbarButtons([
+                        'bold',
+                        'italic',
+                        'underline',
+                        'strike',
+                        'link',
+                        'bulletList',
+                        'orderedList',
+                        'redo',
+                        'undo',
+                    ]),
                 Forms\Components\FileUpload::make('image')
                     ->disk('public')
                     ->directory('products')
@@ -92,7 +102,10 @@ class ProductResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')
                     ->limit(50)
-                    ->searchable(),
+                    ->html()
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->where('description', 'like', "%{$search}%");
+                    }),
                 Tables\Columns\ImageColumn::make('image')
                     ->square(),
                 Tables\Columns\TextColumn::make('created_at')
