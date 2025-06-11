@@ -20,6 +20,11 @@ class Product extends Model
         return $this->hasMany(Inventory::class, 'product_id', 'sku');
     }
 
+    public function waitlists()
+    {
+        return $this->hasMany(Waitlist::class);
+    }
+
     protected static function boot()
     {
         parent::boot();
