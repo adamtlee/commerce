@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -20,14 +21,19 @@ class Product extends Model
 
     protected $with = ['inventory'];
 
-    public function inventory()
+    public function inventory(): HasMany
     {
         return $this->hasMany(Inventory::class, 'product_id', 'sku');
     }
 
-    public function waitlists()
+    public function waitlists(): HasMany
     {
         return $this->hasMany(Waitlist::class);
+    }
+
+    public function saleItems(): HasMany
+    {
+        return $this->hasMany(SaleItem::class);
     }
 
     protected static function boot()
