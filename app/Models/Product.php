@@ -11,6 +11,11 @@ class Product extends Model
         'description',
         'sku',
         'image',
+        'price',
+    ];
+
+    protected $casts = [
+        'price' => 'decimal:2',
     ];
 
     protected $with = ['inventory'];

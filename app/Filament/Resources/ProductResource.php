@@ -32,6 +32,12 @@ class ProductResource extends Resource
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
+                Forms\Components\TextInput::make('price')
+                    ->required()
+                    ->numeric()
+                    ->prefix('$')
+                    ->minValue(0)
+                    ->step(0.01),
                 Forms\Components\RichEditor::make('description')
                     ->required()
                     ->columnSpanFull()
@@ -99,6 +105,9 @@ class ProductResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('price')
+                    ->money('USD')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')
                     ->limit(50)
