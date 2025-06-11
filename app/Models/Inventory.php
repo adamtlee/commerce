@@ -18,6 +18,8 @@ class Inventory extends Model
 
     protected $casts = [
         'last_updated' => 'datetime',
+        'quantity' => 'integer',
+        'security_stock' => 'integer',
     ];
 
     public function product(): BelongsTo

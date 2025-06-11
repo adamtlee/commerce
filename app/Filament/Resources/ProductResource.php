@@ -69,31 +69,34 @@ class ProductResource extends Resource
                     ->panelAspectRatio('2:1')
                     ->panelLayout('integrated')
                     ->columnSpanFull(),
-                Forms\Components\Section::make('Initial Inventory')
+                Forms\Components\Section::make('Inventory')
                     ->schema([
                         Forms\Components\TextInput::make('inventory.barcode')
                             ->label('Barcode')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->default(fn ($record) => $record?->inventory?->barcode),
                         Forms\Components\TextInput::make('inventory.quantity')
                             ->label('Quantity')
                             ->numeric()
-                            ->default(0)
+                            ->default(fn ($record) => $record?->inventory?->quantity ?? 0)
                             ->minValue(0)
                             ->required(),
                         Forms\Components\TextInput::make('inventory.security_stock')
                             ->label('Security Stock')
                             ->numeric()
-                            ->default(0)
+                            ->default(fn ($record) => $record?->inventory?->security_stock ?? 0)
                             ->minValue(0)
                             ->required()
                             ->helperText('Minimum stock level before reordering'),
                         Forms\Components\TextInput::make('inventory.location')
                             ->label('Location')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->default(fn ($record) => $record?->inventory?->location),
                     ])
                     ->columns(2),
-            ]);
+            ])
+            ->statePath('data');
     }
 
     public static function table(Table $table): Table
