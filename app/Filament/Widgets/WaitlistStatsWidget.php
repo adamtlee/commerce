@@ -8,6 +8,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class WaitlistStatsWidget extends BaseWidget
 {
+    protected static ?int $sort = 3;
+
     protected function getStats(): array
     {
         $totalWaitlisted = Waitlist::sum('requested_quantity');
