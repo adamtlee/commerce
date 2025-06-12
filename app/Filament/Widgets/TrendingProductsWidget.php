@@ -6,9 +6,9 @@ use App\Models\SaleItem;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
 
-class RevenueChartWidget extends ChartWidget
+class TrendingProductsWidget extends ChartWidget
 {
-    protected static ?string $heading = 'Revenue Over Time';
+    protected static ?string $heading = 'Trending Products';
     protected static ?int $sort = 1;
     protected int | string | array $columnSpan = [
         'default' => 1,
@@ -21,30 +21,28 @@ class RevenueChartWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $data = SaleItem::selectRaw('DATE(sale_date) as date, SUM(total_price) as revenue')
-            ->groupBy('date')
-            ->orderBy('date')
+        $data = SaleItem::selectRaw('products.name, SUM(sale_items.quantity) as total_sold')
+            ->join('products', 'sale_items.product_id', '=', 'products.id')
+            ->groupBy('products.id', 'products.name')
+            ->orderByDesc('total_sold')
+            ->limit(5)
             ->get();
 
         return [
             'datasets' => [
                 [
-                    'label' => 'Daily Revenue',
-                    'data' => $data->pluck('revenue')->toArray(),
-                    'borderColor' => '#10B981',
+                    'label' => 'Units Sold',
+                    'data' => $data->pluck('total_sold')->toArray(),
                     'backgroundColor' => '#10B981',
-                    'fill' => false,
                 ],
             ],
-            'labels' => $data->pluck('date')->map(function ($date) {
-                return Carbon::parse($date)->format('M d, Y');
-            })->toArray(),
+            'labels' => $data->pluck('name')->toArray(),
         ];
     }
 
     protected function getType(): string
     {
-        return 'line';
+        return 'bar';
     }
 
     protected function getOptions(): array
@@ -54,7 +52,7 @@ class RevenueChartWidget extends ChartWidget
                 'y' => [
                     'beginAtZero' => true,
                     'ticks' => [
-                        'callback' => 'function(value) { return "$" + value.toLocaleString(); }',
+                        'stepSize' => 1,
                     ],
                 ],
             ],
