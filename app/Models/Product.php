@@ -56,18 +56,19 @@ class Product extends Model
         });
 
         static::saving(function ($product) {
-            if (request()->has('inventory')) {
-                $inventory = request()->input('inventory');
-                
+            // Get inventory data from the request or from the data array
+            $inventoryData = request()->input('inventory') ?? request()->input('data.inventory');
+            
+            if ($inventoryData) {
                 // If the product already exists, update its inventory
                 if ($product->exists) {
                     $product->inventory()->updateOrCreate(
                         ['product_id' => $product->sku],
                         [
-                            'barcode' => $inventory['barcode'] ?? null,
-                            'quantity' => $inventory['quantity'] ?? 0,
-                            'security_stock' => $inventory['security_stock'] ?? 0,
-                            'location' => $inventory['location'],
+                            'barcode' => $inventoryData['barcode'] ?? null,
+                            'quantity' => $inventoryData['quantity'] ?? 0,
+                            'security_stock' => $inventoryData['security_stock'] ?? 0,
+                            'location' => $inventoryData['location'],
                             'last_updated' => now(),
                         ]
                     );

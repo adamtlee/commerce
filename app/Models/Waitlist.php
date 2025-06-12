@@ -14,10 +14,12 @@ class Waitlist extends Model
         'notes',
         'status',
         'notified_at',
+        'requested_quantity',
     ];
 
     protected $casts = [
         'notified_at' => 'datetime',
+        'requested_quantity' => 'integer',
     ];
 
     public function product(): BelongsTo

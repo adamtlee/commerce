@@ -34,6 +34,12 @@ class WaitlistResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('requested_quantity')
+                    ->required()
+                    ->numeric()
+                    ->default(1)
+                    ->minValue(1)
+                    ->label('Requested Quantity'),
                 Forms\Components\Textarea::make('notes')
                     ->maxLength(65535)
                     ->columnSpanFull(),
@@ -63,6 +69,10 @@ class WaitlistResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('requested_quantity')
+                    ->numeric()
+                    ->sortable()
+                    ->label('Requested Quantity'),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
