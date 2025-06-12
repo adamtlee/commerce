@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Widgets\Widget;
 
 class SaleItemResource extends Resource
 {
@@ -147,6 +148,13 @@ class SaleItemResource extends Resource
             'index' => Pages\ListSaleItems::route('/'),
             'create' => Pages\CreateSaleItem::route('/create'),
             'edit' => Pages\EditSaleItem::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\SalesStatsWidget::class,
         ];
     }
 }

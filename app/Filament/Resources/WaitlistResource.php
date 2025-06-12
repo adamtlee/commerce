@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Widgets\Widget;
 
 class WaitlistResource extends Resource
 {
@@ -121,6 +122,13 @@ class WaitlistResource extends Resource
             'index' => Pages\ListWaitlists::route('/'),
             'create' => Pages\CreateWaitlist::route('/create'),
             'edit' => Pages\EditWaitlist::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\WaitlistStatsWidget::class,
         ];
     }
 } 
