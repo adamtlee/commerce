@@ -9,6 +9,7 @@ class SaleItem extends Model
 {
     protected $fillable = [
         'sale_id',
+        'channel_id',
         'product_id',
         'product_name',
         'product_sku',
@@ -27,6 +28,11 @@ class SaleItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function channel(): BelongsTo
+    {
+        return $this->belongsTo(SalesChannel::class, 'channel_id');
     }
 
     protected static function boot()

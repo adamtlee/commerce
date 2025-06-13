@@ -29,6 +29,11 @@ class SaleItemResource extends Resource
                 Forms\Components\TextInput::make('sale_id')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\Select::make('channel_id')
+                    ->relationship('channel', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 Forms\Components\Select::make('product_id')
                     ->relationship('product', 'name')
                     ->searchable()
@@ -81,6 +86,9 @@ class SaleItemResource extends Resource
                 Tables\Columns\TextColumn::make('sale_id')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('channel.name')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('product_name')
                     ->searchable()
                     ->sortable(),
@@ -105,6 +113,8 @@ class SaleItemResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('channel')
+                    ->relationship('channel', 'name'),
                 Tables\Filters\SelectFilter::make('product')
                     ->relationship('product', 'name'),
                 Tables\Filters\Filter::make('sale_date')

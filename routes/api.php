@@ -3,6 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\ProductController;
+use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\SaleItemController;
+use App\Http\Controllers\Api\V1\WaitlistController;
+use App\Http\Controllers\Api\V1\InventoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +30,23 @@ Route::get('/test', function () {
 
 // API v1 Routes
 Route::prefix('v1')->group(function () {
+    // Products
     Route::get('/products', [ProductController::class, 'index']);
     Route::get('/products/{product}', [ProductController::class, 'show']);
+
+    // Users
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+
+    // Sale Items
+    Route::get('/sale-items', [SaleItemController::class, 'index']);
+    Route::get('/sale-items/{saleItem}', [SaleItemController::class, 'show']);
+
+    // Waitlists
+    Route::get('/waitlists', [WaitlistController::class, 'index']);
+    Route::get('/waitlists/{waitlist}', [WaitlistController::class, 'show']);
+
+    // Inventories
+    Route::get('/inventories', [InventoryController::class, 'index']);
+    Route::get('/inventories/{inventory}', [InventoryController::class, 'show']);
 }); 
