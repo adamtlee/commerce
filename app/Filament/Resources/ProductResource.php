@@ -24,51 +24,73 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('sku')
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('$')
-                    ->minValue(0)
-                    ->step(0.01),
-                Forms\Components\RichEditor::make('description')
-                    ->required()
-                    ->columnSpanFull()
-                    ->toolbarButtons([
-                        'bold',
-                        'italic',
-                        'underline',
-                        'strike',
-                        'link',
-                        'bulletList',
-                        'orderedList',
-                        'redo',
-                        'undo',
+                Forms\Components\Section::make('Product Information')
+                    ->schema([
+                        Forms\Components\TextInput::make('sku')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('price')
+                            ->required()
+                            ->numeric()
+                            ->prefix('$')
+                            ->minValue(0)
+                            ->step(0.01),
+                        Forms\Components\RichEditor::make('description')
+                            ->required()
+                            ->columnSpanFull()
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'strike',
+                                'link',
+                                'bulletList',
+                                'orderedList',
+                                'redo',
+                                'undo',
+                            ]),
+                        Forms\Components\FileUpload::make('image')
+                            ->disk('public')
+                            ->directory('products')
+                            ->visibility('public')
+                            ->image()
+                            ->maxSize(5120)
+                            ->imageResizeMode('cover')
+                            ->imageResizeTargetWidth('1920')
+                            ->imageResizeTargetHeight('1080')
+                            ->imageResizeUpscale(false)
+                            ->preserveFilenames()
+                            ->downloadable()
+                            ->openable()
+                            ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/jpg', 'image/gif'])
+                            ->panelAspectRatio('2:1')
+                            ->panelLayout('integrated')
+                            ->columnSpanFull(),
                     ]),
-                Forms\Components\FileUpload::make('image')
-                    ->disk('public')
-                    ->directory('products')
-                    ->visibility('public')
-                    ->image()
-                    ->maxSize(5120)
-                    ->imageResizeMode('cover')
-                    ->imageResizeTargetWidth('1920')
-                    ->imageResizeTargetHeight('1080')
-                    ->imageResizeUpscale(false)
-                    ->preserveFilenames()
-                    ->downloadable()
-                    ->openable()
-                    ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/jpg', 'image/gif'])
-                    ->panelAspectRatio('2:1')
-                    ->panelLayout('integrated')
-                    ->columnSpanFull(),
+                Forms\Components\Section::make('Inventory')
+                    ->schema([
+                        Forms\Components\TextInput::make('inventory.barcode')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('inventory.quantity')
+                            ->required()
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0),
+                        Forms\Components\TextInput::make('inventory.security_stock')
+                            ->required()
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0)
+                            ->helperText('Minimum stock level before reordering'),
+                        Forms\Components\TextInput::make('inventory.location')
+                            ->required()
+                            ->maxLength(255),
+                    ]),
             ])
             ->statePath('data');
     }
