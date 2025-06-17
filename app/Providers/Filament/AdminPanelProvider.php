@@ -40,6 +40,7 @@ class AdminPanelProvider extends PanelProvider
                 SaleItemResource::class,
                 SalesChannelResource::class,
                 WaitlistResource::class,
+                \App\Filament\Resources\InventoryResource::class,
             ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
