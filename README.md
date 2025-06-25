@@ -1,6 +1,6 @@
 # Commerce
 
-Commerce is a modern, open-source headless e-commerce platform designed for developers who want full control and flexibility. Built on a modular, API-first architecture, it provides a powerful backend for managing products, carts, and orders, allowing you to build a custom storefront using any frontend framework (e.g., React, Next.js, Vue, Svelte).
+Commerce is a modern, open-source headless e-commerce platform designed for developers who want full control and flexibility. Built on a modular, API-first architecture, it provides a powerful backend for managing products, carts, and orders, allowing you to build a custom storefront using any frontend framework (e.g., React, Next.js, Vue, Svelte). 
 
 Unlike monolithic platforms such as Shopify, Commerce gives you the freedom to create unique, high-performance shopping experiences without being locked into a proprietary system.
 ---
@@ -15,7 +15,7 @@ Unlike monolithic platforms such as Shopify, Commerce gives you the freedom to c
 - Extensible: A modular architecture that allows you to integrate with other services (CMS, payment gateways, shipping providers) and build custom logic.
 - Developer-Friendly: Built with modern web technologies, offering an intuitive SDK and clear documentation.
 
-### 🚀 Getting Started
+## 🚀 Getting Started
 
 This guide will help you set up and run Commerce locally for development.
 
