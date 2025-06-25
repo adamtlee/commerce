@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\SocialiteController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,6 +20,13 @@ Route::middleware('guest')->group(function () {
         ->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
+
+    // Social Authentication Routes
+    Route::get('auth/{provider}/redirect', [SocialiteController::class, 'redirect'])
+        ->name('socialite.redirect');
+    
+    Route::get('auth/{provider}/callback', [SocialiteController::class, 'callback'])
+        ->name('socialite.callback');
 });
 
 Route::middleware('auth')->group(function () {

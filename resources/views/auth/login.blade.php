@@ -118,6 +118,68 @@
                 font-size: 0.875rem;
                 margin-top: 0.25rem;
             }
+            .social-login {
+                margin-top: 1.5rem;
+                text-align: center;
+            }
+            .social-login p {
+                color: #1b1b18;
+                font-size: 0.875rem;
+                margin-bottom: 1rem;
+                position: relative;
+            }
+            .dark .social-login p {
+                color: #EDEDEC;
+            }
+            .social-login p::before,
+            .social-login p::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                width: 30%;
+                height: 1px;
+                background: #19140035;
+            }
+            .dark .social-login p::before,
+            .dark .social-login p::after {
+                background: #3E3E3A;
+            }
+            .social-login p::before {
+                left: 0;
+            }
+            .social-login p::after {
+                right: 0;
+            }
+            .social-buttons {
+                display: flex;
+                gap: 1rem;
+            }
+            .social-button {
+                flex: 1;
+                padding: 0.5rem;
+                border: 1px solid #19140035;
+                border-radius: 0.25rem;
+                background: white;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background-color 0.2s;
+            }
+            .dark .social-button {
+                border-color: #3E3E3A;
+                background: #2a2a2a;
+            }
+            .social-button:hover {
+                background: #f5f5f5;
+            }
+            .dark .social-button:hover {
+                background: #333;
+            }
+            .social-button img {
+                width: 24px;
+                height: 24px;
+            }
         </style>
     </head>
     <body>
@@ -147,6 +209,18 @@
                         @endif
                     </div>
                 </form>
+
+                <div class="social-login">
+                    <p>Or continue with</p>
+                    <div class="social-buttons">
+                        <a href="#" class="social-button">
+                            <img src="https://www.google.com/favicon.ico" alt="Google">
+                        </a>
+                        <a href="#" class="social-button">
+                            <img src="https://www.facebook.com/favicon.ico" alt="Facebook">
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
