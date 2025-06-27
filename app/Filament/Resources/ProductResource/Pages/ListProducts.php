@@ -29,6 +29,15 @@ class ListProducts extends ListRecords
                     \App\Filament\Resources\ProductResource\Pages\ListProducts::handleCsvImport($data['csv_file']);
                 })
                 ->modalButton('Import'),
+            Actions\Action::make('exportProducts')
+                ->label('Export Products')
+                ->icon('heroicon-o-arrow-up-tray')
+                ->modalHeading('Export Products and Inventory')
+                ->modalDescription('Download a CSV file of all products and their inventory.')
+                ->modalButton('Export')
+                ->action(function () {
+                    return self::exportProductsCsv();
+                }),
         ];
     }
 
@@ -91,5 +100,36 @@ class ListProducts extends ListRecords
                 ->danger()
                 ->send();
         }
+    }
+
+    public static function exportProductsCsv()
+    {
+        $products = \App\Models\Product::with('inventory')->get();
+        $headers = [
+            'sku', 'name', 'description', 'price',
+            'inventory_barcode', 'inventory_quantity', 'inventory_security_stock', 'inventory_location',
+        ];
+        $rows = [];
+        foreach ($products as $product) {
+            $rows[] = [
+                $product->sku,
+                $product->name,
+                $product->description,
+                $product->price,
+                $product->inventory->barcode ?? '',
+                $product->inventory->quantity ?? '',
+                $product->inventory->security_stock ?? '',
+                $product->inventory->location ?? '',
+            ];
+        }
+        $filename = 'products_export_' . now()->format('Ymd_His') . '.csv';
+        $filepath = storage_path('app/public/' . $filename);
+        $handle = fopen($filepath, 'w');
+        fputcsv($handle, $headers);
+        foreach ($rows as $row) {
+            fputcsv($handle, $row);
+        }
+        fclose($handle);
+        return response()->download($filepath)->deleteFileAfterSend();
     }
 }
