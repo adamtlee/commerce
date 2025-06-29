@@ -9,6 +9,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/products', function () {
+    $products = \App\Models\Product::with('inventory')->get();
+    return view('products.index', compact('products'));
+})->name('products.index');
+
 // Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
