@@ -162,13 +162,20 @@
             }
         }
     </style>
+    <script src="//unpkg.com/alpinejs" defer></script>
 </head>
-<body>
+<body x-data="{ open: false, selectedProduct: null }">
     <div class="container">
         <div class="header">
             <h1>Our Products</h1>
             <p>Discover our collection of high-quality products</p>
         </div>
+
+        @if(session('success'))
+            <div style="background: #d1fae5; color: #065f46; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center;">
+                {{ session('success') }}
+            </div>
+        @endif
 
         @if($products->count() > 0)
             <div class="products-grid">
@@ -181,19 +188,16 @@
                                 <span>No Image</span>
                             </div>
                         @endif
-                        
                         <div class="product-info">
                             <h2 class="product-name">{{ $product->name }}</h2>
                             <p class="product-sku">SKU: {{ $product->sku }}</p>
                             <div class="product-price">${{ number_format($product->price, 2) }}</div>
                             <p class="product-description">{{ strip_tags($product->description) }}</p>
-                            
                             @if($product->inventory)
                                 <div class="inventory-info">
                                     @php
                                         $quantity = $product->inventory->quantity;
                                         $securityStock = $product->inventory->security_stock;
-                                        
                                         if ($quantity > $securityStock) {
                                             $stockClass = 'in-stock';
                                             $stockText = 'In Stock';
@@ -205,21 +209,85 @@
                                             $stockText = 'Out of Stock';
                                         }
                                     @endphp
-                                    
                                     <span class="stock-status {{ $stockClass }}">{{ $stockText }}</span>
                                     <span class="location">{{ $product->inventory->location }}</span>
                                 </div>
                             @endif
+                            <button type="button" @click="selectedProduct = { id: {{ $product->id }}, name: '{{ addslashes($product->name) }}' }; open = true" style="margin-top: 1rem; background: #2563eb; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Order</button>
                         </div>
                     </div>
                 @endforeach
             </div>
         @else
             <div class="no-products">
-                <h2>No Products Available</h2>
-                <p>We're currently updating our product catalog. Please check back soon!</p>
+                <h2>No products available.</h2>
+                <p>Please check back later.</p>
             </div>
         @endif
+
+        <!-- Single Modal at Page Level -->
+        <div 
+            x-show="open" 
+            x-cloak
+            style="
+                position: fixed; 
+                inset: 0; 
+                background: rgba(31,41,55,0.5); 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                z-index: 1000;
+            "
+        >
+            <div 
+                style="
+                    background: white; 
+                    border-radius: 12px; 
+                    padding: 2rem; 
+                    width: 100%; 
+                    max-width: 400px; 
+                    box-shadow: 0 10px 25px -3px rgba(0,0,0,0.1); 
+                    position: relative;
+                    margin: 0 auto;
+                    display: flex;
+                    flex-direction: column;
+                "
+            >
+                <button @click="open = false" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; color: #6b7280; cursor: pointer;">&times;</button>
+                <template x-if="selectedProduct">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Order <span x-text="selectedProduct.name"></span></h3>
+                </template>
+                <form method="POST" action="{{ route('orders.store') }}">
+                    @csrf
+                    <input type="hidden" name="product_id" :value="selectedProduct ? selectedProduct.id : ''">
+                    <div style="margin-bottom: 0.75rem;">
+                        <label>First Name</label>
+                        <input type="text" name="first_name" required style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px;">
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <label>Last Name</label>
+                        <input type="text" name="last_name" required style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px;">
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <label>Email</label>
+                        <input type="email" name="email" required style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px;">
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <label>Phone <span style="color: #9ca3af; font-size: 0.85em;">(optional)</span></label>
+                        <input type="text" name="phone" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px;">
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <label>Address</label>
+                        <input type="text" name="address" required style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px;">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label>Note <span style="color: #9ca3af; font-size: 0.85em;">(optional)</span></label>
+                        <textarea name="note" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px;"></textarea>
+                    </div>
+                    <button type="submit" style="background: #059669; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%;">Submit Order</button>
+                </form>
+            </div>
+        </div>
     </div>
 </body>
 </html> 

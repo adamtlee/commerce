@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\OrderController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -43,3 +44,5 @@ Route::middleware('auth')->group(function () {
 Route::get('logout', function () {
     return redirect('/');
 });
+
+Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');

@@ -6,6 +6,7 @@ use App\Filament\Resources\ProductResource;
 use App\Filament\Resources\SaleItemResource;
 use App\Filament\Resources\SalesChannelResource;
 use App\Filament\Resources\WaitlistResource;
+use App\Filament\Resources\OrderResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -41,6 +42,7 @@ class AdminPanelProvider extends PanelProvider
                 SalesChannelResource::class,
                 WaitlistResource::class,
                 \App\Filament\Resources\InventoryResource::class,
+                OrderResource::class,
             ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
