@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Arr;
 
 class Product extends Model
 {
@@ -42,16 +43,23 @@ class Product extends Model
         parent::boot();
 
         static::created(function ($product) {
-            if (request()->has('inventory')) {
-                $inventory = request()->input('inventory');
-                $product->inventory()->create([
-                    'product_id' => $product->sku,
-                    'barcode' => $inventory['barcode'] ?? null,
-                    'quantity' => $inventory['quantity'] ?? 0,
-                    'security_stock' => $inventory['security_stock'] ?? 0,
-                    'location' => $inventory['location'],
-                    'last_updated' => now(),
-                ]);
+            $data = request()->all();
+            $inventory = [
+                'barcode' => Arr::get($data, 'inventory.barcode'),
+                'quantity' => Arr::get($data, 'inventory.quantity', 0),
+                'security_stock' => Arr::get($data, 'inventory.security_stock', 0),
+                'location' => Arr::get($data, 'inventory.location'),
+                'last_updated' => now(),
+            ];
+
+            // Only create if at least one inventory field is present
+            if (
+                Arr::get($data, 'inventory.barcode') !== null ||
+                Arr::get($data, 'inventory.quantity') !== null ||
+                Arr::get($data, 'inventory.security_stock') !== null ||
+                Arr::get($data, 'inventory.location') !== null
+            ) {
+                $product->inventory()->create(array_merge(['product_id' => $product->sku], $inventory));
             }
         });
 

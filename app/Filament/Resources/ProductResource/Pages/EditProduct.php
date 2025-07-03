@@ -16,4 +16,18 @@ class EditProduct extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $inventory = $this->record->inventory;
+        if ($inventory) {
+            $data['inventory'] = [
+                'barcode' => $inventory->barcode,
+                'quantity' => $inventory->quantity,
+                'security_stock' => $inventory->security_stock,
+                'location' => $inventory->location,
+            ];
+        }
+        return $data;
+    }
 }

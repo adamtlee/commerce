@@ -72,25 +72,6 @@ class ProductResource extends Resource
                             ->panelLayout('integrated')
                             ->columnSpanFull(),
                     ]),
-                Forms\Components\Section::make('Inventory')
-                    ->schema([
-                        Forms\Components\TextInput::make('inventory.barcode')
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('inventory.quantity')
-                            ->required()
-                            ->numeric()
-                            ->default(0)
-                            ->minValue(0),
-                        Forms\Components\TextInput::make('inventory.security_stock')
-                            ->required()
-                            ->numeric()
-                            ->default(0)
-                            ->minValue(0)
-                            ->helperText('Minimum stock level before reordering'),
-                        Forms\Components\TextInput::make('inventory.location')
-                            ->required()
-                            ->maxLength(255),
-                    ]),
             ])
             ->statePath('data');
     }
@@ -152,5 +133,37 @@ class ProductResource extends Resource
             'create' => Pages\CreateProduct::route('/create'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];
+    }
+
+    public static function mutateFormDataBeforeSave(array $data): array
+    {
+        // Remove inventory from $data so it doesn't try to save to products table
+        // We'll handle inventory in afterSave
+        return $data;
+    }
+
+    public static function afterSave($record, array $data): void
+    {
+        // Reconstruct inventory array from flat keys
+        $inventory = [
+            'barcode' => $data['inventory.barcode'] ?? null,
+            'quantity' => $data['inventory.quantity'] ?? 0,
+            'security_stock' => $data['inventory.security_stock'] ?? 0,
+            'location' => $data['inventory.location'] ?? null,
+            'last_updated' => now(),
+        ];
+
+        // Only update if at least one inventory field is present
+        if (
+            $data['inventory.barcode'] ?? null ||
+            $data['inventory.quantity'] ?? null ||
+            $data['inventory.security_stock'] ?? null ||
+            $data['inventory.location'] ?? null
+        ) {
+            $record->inventory()->updateOrCreate(
+                ['product_id' => $record->sku],
+                $inventory
+            );
+        }
     }
 }
