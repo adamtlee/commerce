@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\Product;
 use App\Models\SalesChannel;
+use App\Models\Order;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -21,6 +22,11 @@ class SalesChannelsStatsWidget extends BaseWidget
                 ->description('Active sales channels')
                 ->descriptionIcon('heroicon-m-shopping-cart')
                 ->color('success'),
+
+            Stat::make('Orders', Order::count())
+                ->description('Total orders')
+                ->descriptionIcon('heroicon-m-clipboard-document-list')
+                ->color('warning'),
         ];
     }
 } 
