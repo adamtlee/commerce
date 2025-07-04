@@ -145,6 +145,37 @@
                 color: #EDEDEC;
             }
 
+            .shop-button {
+                background-color: #1b1b18;
+                color: white;
+                border: 1px solid #19140035;
+                padding: 0.5rem 1rem;
+                border-radius: 0.25rem;
+                font-size: 0.875rem;
+                font-weight: 500;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
+                transition: all 0.2s ease;
+            }
+
+            .shop-button:hover {
+                border-color: #1915014a;
+                background-color: #f8f8f8;
+                color: #1b1b18;
+            }
+
+            .dark .shop-button {
+                background-color: #1a1a1a;
+                border-color: #3E3E3A;
+                color: #EDEDEC;
+            }
+
+            .dark .shop-button:hover {
+                border-color: #62605b;
+                background-color: #2a2a2a;
+            }
+
             @media (max-width: 640px) {
                 header {
                     padding: 0.5rem;
@@ -217,6 +248,9 @@
             <div class="tagline">
                 Your one-stop solution for managing products and inventory.
             </div>
+            <a href="{{ route('products.index') }}" class="shop-button">
+                Shop
+            </a>
         </div>
     </body>
 </html> 
