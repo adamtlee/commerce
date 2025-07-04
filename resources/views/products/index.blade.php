@@ -164,7 +164,7 @@
     </style>
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
-<body x-data="{ open: false, selectedProduct: null }">
+<body x-data="{ open: false, selectedProduct: null, showDetails: false, selectedProductDetails: null }">
     <div class="container">
         <div class="header">
             <h1>Our Products</h1>
@@ -180,7 +180,19 @@
         @if($products->count() > 0)
             <div class="products-grid">
                 @foreach($products as $product)
-                    <div class="product-card">
+                    <div class="product-card" style="cursor: pointer;" @click="selectedProductDetails = { 
+                        id: {{ $product->id }}, 
+                        name: '{{ addslashes($product->name) }}', 
+                        sku: '{{ addslashes($product->sku) }}', 
+                        price: {{ $product->price }}, 
+                        description: '{{ addslashes(strip_tags($product->description)) }}',
+                        image: '{{ $product->image ? asset('storage/' . $product->image) : '' }}',
+                        quantity: {{ $product->inventory ? $product->inventory->quantity : 0 }},
+                        securityStock: {{ $product->inventory ? $product->inventory->security_stock : 0 }},
+                        location: '{{ $product->inventory ? addslashes($product->inventory->location) : 'N/A' }}',
+                        barcode: '{{ $product->inventory && $product->inventory->barcode ? addslashes($product->inventory->barcode) : 'N/A' }}',
+                        created: '{{ $product->created_at->format('M d, Y') }}'
+                    }; showDetails = true">
                         @if($product->image)
                             <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="product-image">
                         @else
@@ -213,7 +225,7 @@
                                     <span class="location">{{ $product->inventory->location }}</span>
                                 </div>
                             @endif
-                            <button type="button" @click="selectedProduct = { id: {{ $product->id }}, name: '{{ addslashes($product->name) }}' }; open = true" style="margin-top: 1rem; background: #2563eb; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Order</button>
+                            <button type="button" @click.stop="selectedProduct = { id: {{ $product->id }}, name: '{{ addslashes($product->name) }}' }; open = true" style="margin-top: 1rem; background: #2563eb; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Order</button>
                         </div>
                     </div>
                 @endforeach
@@ -225,7 +237,102 @@
             </div>
         @endif
 
-        <!-- Single Modal at Page Level -->
+        <!-- Product Details Modal -->
+        <div 
+            x-show="showDetails" 
+            x-cloak
+            style="
+                position: fixed; 
+                inset: 0; 
+                background: rgba(31,41,55,0.5); 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                z-index: 1000;
+            "
+        >
+            <div 
+                style="
+                    background: white; 
+                    border-radius: 12px; 
+                    padding: 2rem; 
+                    width: 100%; 
+                    max-width: 600px; 
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    box-shadow: 0 10px 25px -3px rgba(0,0,0,0.1); 
+                    position: relative;
+                    margin: 0 auto;
+                "
+            >
+                <button @click="showDetails = false" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; color: #6b7280; cursor: pointer;">&times;</button>
+                
+                <template x-if="selectedProductDetails">
+                    <div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                            <!-- Product Image -->
+                            <div>
+                                <template x-if="selectedProductDetails.image">
+                                    <img :src="selectedProductDetails.image" :alt="selectedProductDetails.name" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;">
+                                </template>
+                                <template x-if="!selectedProductDetails.image">
+                                    <div style="width: 100%; height: 300px; background: #f3f4f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #9ca3af;">
+                                        <span>No Image Available</span>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Product Information -->
+                            <div>
+                                <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;" x-text="selectedProductDetails.name"></h2>
+                                <p style="color: #6b7280; margin-bottom: 1rem;">SKU: <span x-text="selectedProductDetails.sku"></span></p>
+                                <div style="font-size: 2rem; font-weight: 700; color: #059669; margin-bottom: 1rem;">$<span x-text="selectedProductDetails.price.toFixed(2)"></span></div>
+                                
+                                <div style="margin-bottom: 1.5rem;">
+                                    <h3 style="font-weight: 600; margin-bottom: 0.5rem;">Description</h3>
+                                    <p style="color: #4b5563; line-height: 1.6;" x-text="selectedProductDetails.description"></p>
+                                </div>
+
+                                <!-- Inventory Details -->
+                                <div style="border-top: 1px solid #e5e7eb; padding-top: 1rem;">
+                                    <h3 style="font-weight: 600; margin-bottom: 1rem;">Inventory Details</h3>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem;">
+                                        <div>
+                                            <span style="color: #6b7280;">Quantity:</span>
+                                            <span style="font-weight: 600; margin-left: 0.5rem;" x-text="selectedProductDetails.quantity"></span>
+                                        </div>
+                                        <div>
+                                            <span style="color: #6b7280;">Security Stock:</span>
+                                            <span style="font-weight: 600; margin-left: 0.5rem;" x-text="selectedProductDetails.securityStock"></span>
+                                        </div>
+                                        <div>
+                                            <span style="color: #6b7280;">Location:</span>
+                                            <span style="font-weight: 600; margin-left: 0.5rem;" x-text="selectedProductDetails.location"></span>
+                                        </div>
+                                        <div>
+                                            <span style="color: #6b7280;">Barcode:</span>
+                                            <span style="font-weight: 600; margin-left: 0.5rem;" x-text="selectedProductDetails.barcode"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top: 1.5rem;">
+                                    <p style="color: #6b7280; font-size: 0.8rem;">Added: <span x-text="selectedProductDetails.created"></span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                            <button @click="showDetails = false" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Close</button>
+                            <button @click="selectedProduct = { id: selectedProductDetails.id, name: selectedProductDetails.name }; showDetails = false; open = true" style="background: #2563eb; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Order Now</button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Order Modal (existing) -->
         <div 
             x-show="open" 
             x-cloak
