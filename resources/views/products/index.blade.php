@@ -204,7 +204,6 @@
                             <h2 class="product-name">{{ $product->name }}</h2>
                             <p class="product-sku">SKU: {{ $product->sku }}</p>
                             <div class="product-price">${{ number_format($product->price, 2) }}</div>
-                            <p class="product-description">{{ strip_tags($product->description) }}</p>
                             @if($product->inventory)
                                 <div class="inventory-info">
                                     @php
@@ -269,7 +268,7 @@
                 
                 <template x-if="selectedProductDetails">
                     <div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                        <div style="display: flex; flex-direction: column; gap: 2rem; margin-bottom: 2rem;">
                             <!-- Product Image -->
                             <div>
                                 <template x-if="selectedProductDetails.image">
