@@ -5,6 +5,7 @@ namespace App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Notifications\Notification;
 
 class ListOrders extends ListRecords
 {
@@ -24,6 +25,29 @@ class ListOrders extends ListRecords
                     return self::exportOrdersCsv();
                 }),
         ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            // Add a widget to show new order notifications
+        ];
+    }
+
+    public function mount(): void
+    {
+        parent::mount();
+        
+        // Check for new orders and show notification
+        $newOrdersCount = \App\Models\Order::where('status', 'pending')->count();
+        if ($newOrdersCount > 0) {
+            Notification::make()
+                ->title("You have {$newOrdersCount} pending order(s)")
+                ->body("Click here to review new orders")
+                ->warning()
+                ->persistent()
+                ->send();
+        }
     }
 
     public static function exportOrdersCsv()

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
+use Filament\Notifications\Notification;
 
 class OrderController extends Controller
 {
@@ -30,6 +31,16 @@ class OrderController extends Controller
             'status' => 'pending',
             'user_id' => auth()->check() ? auth()->id() : null,
         ]);
+
+        // Send notification to all users (or you can modify this to send to specific admin users)
+        $users = \App\Models\User::all();
+        if ($users->count() > 0) {
+            Notification::make()
+                ->title('New Order Received')
+                ->body("Order #{$order->id} from {$order->first_name} {$order->last_name} for product ID: {$order->product_id}")
+                ->success()
+                ->sendToDatabase($users);
+        }
 
         return redirect()->back()->with('success', 'Your order has been submitted and is pending approval.');
     }
